@@ -1,10 +1,8 @@
-// /*
 // POST    /genres
-// PUT     /genres/:genreId
 // DELETE  /genres/:genreId
-// */
 
 import express from "express"
+import pick from "lodash/pick.js"
 
 const genreRouter = express.Router();
 
@@ -39,7 +37,21 @@ genreRouter.get("/genres/:genreId/books", async (request, response) => {
     response.send({books: genres.books})
 })
 
+// ============ PUT /genres/:genreId ============:
+genreRouter.put("/genres/:genreId", async (request, response) => {
+    const genreId = request.params.genreId
+    // response.send({data:request.body.title, message:"ok"})
 
+    const filteredBody = pick(request.body, ["title"])
+
+    const updatedGenre = await request.app.locals.prisma.genre.update({
+        where: {
+            id: Number.parseInt(genreId),
+          },
+        data: filteredBody,
+      })
+    response.send({ data: updatedGenre, message: "ok" })
+})
 
 
 

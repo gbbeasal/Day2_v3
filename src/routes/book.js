@@ -90,7 +90,7 @@ booksRouter.post(
             return;
         }
 
-        const body = request.body;
+        //const body = request.body;
         // console.log(body)
         // console.log(body.title)
 
