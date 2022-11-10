@@ -1,4 +1,5 @@
 import express from "express"
+import pick from "lodash/pick.js"
 
 const authorRouter = express.Router();
 
@@ -37,9 +38,27 @@ authorRouter.get("/authors/:authorId/books", async (request, response) => {
     response.send({ books: authors.books })
 })
 
+// ============ PUT /authors/:authorId ============:
+authorRouter.put("/authors/:authorId", async (request, response) => {
+    const authorId = request.params.authorId
+    // response.send({data:request.body.title, message:"ok"})
+
+    const filteredBody = pick(request.body, [
+        "firstName",
+        "lastName"
+    ])
+
+    const updatedAuthor = await request.app.locals.prisma.author.update({
+        where: {
+            id: Number.parseInt(authorId),
+          },
+        data: filteredBody,
+      })
+    response.send({ data: updatedAuthor, message: "ok" })
+})
+
 /*
 POST /authors
-PUT /authors/:authorId
 DELETE /authors/:authorId
  */
 
