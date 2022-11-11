@@ -1,8 +1,8 @@
-// POST    /genres
 // DELETE  /genres/:genreId
 
 import express from "express"
 import pick from "lodash/pick.js"
+import { body, validationResult } from "express-validator"
 
 const genreRouter = express.Router();
 
@@ -53,6 +53,33 @@ genreRouter.put("/genres/:genreId", async (request, response) => {
     response.send({ data: updatedGenre, message: "ok" })
 })
 
+// ============== POST /genres ==============:
+genreRouter.post(
+    "/genres", 
+    //validation help from express-validators (inside an array)
+    [
+        body('title')
+            .notEmpty()
+            .isLength({min: 3}) // title length restriction
+            .withMessage("Book requires a `firstName` and should be more than 5 characters long")
+    ], 
+    async (request, response) => {
 
+        const errors = validationResult(request);
+        // if may laman si error, we send a reponse containing all the errors
+        if (!errors.isEmpty()) {
+            response.status(400).json({ errors: errors.array() })
+            return;
+        }
+
+        const filteredBody = pick(request.body, ["title"])
+
+        // response.send({ data: filteredBody, message: "ok"})
+        const genre = await request.app.locals.prisma.genre.create({
+        data: filteredBody,
+        })
+        // response.send({ data: filteredBody, message: "book added successfully" })
+        response.send({ genre: genre, message: "Genre added successfully" })
+})
 
 export default genreRouter;
