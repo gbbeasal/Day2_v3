@@ -11,7 +11,7 @@ const authorRouter = express.Router();
 // ============== GET /authors ==============:
 authorRouter.get("/authors", async (request, response) => {
     const authors = await request.app.locals.prisma.author.findMany()
-    response.send({ authors: authors })
+    response.send({ authors: authors, message: authors? "ok":"Author not found" })
 })
 
 // ============== GET /authors/:authorId ==============:
@@ -22,7 +22,7 @@ authorRouter.get("/authors/:authorId", async (request, response) => {
             id: Number.parseInt(authorId),
         },
     })
-    response.send({ author: authors })
+    response.send({ author: authors, message: authors? "ok":"Author not found" })
 })
 
 // ============== GET /authors/:authorId/books ==============:
@@ -36,7 +36,7 @@ authorRouter.get("/authors/:authorId/books", async (request, response) => {
             books: true,
           },
     })
-    response.send({ books: authors.books })
+    response.send({ books: authors.books, message: authors.books? "ok":"Author does not have any books" })
 })
 
 // ============ PUT /authors/:authorId ============:
@@ -55,7 +55,7 @@ authorRouter.put("/authors/:authorId", async (request, response) => {
           },
         data: filteredBody,
       })
-    response.send({ data: updatedAuthor, message: "ok" })
+    response.send({ data: updatedAuthor, message: "Field update successful" })
 })
 
 // ============== POST /authors ==============:
@@ -95,17 +95,16 @@ authorRouter.post(
 })
 
 // ============== DELETE /authors/:authorId ==============:
-// booksRouter.delete("/books/:bookId", async (request, response) => {
-//     const bookId = parseInt(request.params.bookId);
+// authorRouter.delete("/authors/:authorId", async (request, response) => {
 //     try {
-//         const deletedBook = await request.app.locals.prisma.book.delete({
+//         const deletedAuthor = await request.app.locals.prisma.author.delete({
 //             where: {
-//                 id: Number.parseInt(bookId),
+//                 id: Number.parseInt(authorId),
 //             },
 //         });
-//         response.send({ data: deletedBook, message: deletedBook? "ok":"book not found" })
+//         response.send({ data: deletedAuthor, message: deletedAuthor? "ok":"Author not found" })
 //     } catch {
-//         response.send({ data: null, message: "book not found" })
+//         response.send({ data: null, message: "Author not found" })
 //     }
 // })
 
